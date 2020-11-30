@@ -6,6 +6,10 @@ from mailer import Mailer
 from twilio.rest import Client
 from urllib.parse import urlparse
 
+# Test product:
+#PRODUCT_LINK = 'https://www.chainreactioncycles.com/us/en/lifeline-essential-torque-wrench-set/rp-prod155414'
+PRODUCT_LINK = 'https://www.chainreactioncycles.com/us/en/lifeline-pro-mechanic-wheel-truing-stand/rp-prod122322'
+
 def loadSettings(settingsFileName):
     with open(settingsFileName, 'r') as f:
         settings = f.read()
@@ -43,12 +47,12 @@ class Logger:
         try:
             mailer = Mailer('mail_settings.json', 'Web Page Checker', self._settings['from_address'])
             if self._finalMessage == '' or self._inStock is None:
-                mailer.send_mail(self._settings['to_address'], 'Failures checking Product Stock', 'Failed to check product stock\n\nLog:\n' + self._log)
+                mailer.send_mail(self._settings['to_address'], 'Failures Checking Product Stock', 'Failed to check product stock for truing stand\n\nLog:\n' + self._log)
             else:
                 if self._inStock:
-                    mailer.send_mail(self._settings['to_address'], 'Product is in Stock!', 'Order right away!\n\nLog:\n' + self._log)
+                    mailer.send_mail(self._settings['to_address'], 'Truing Stand Is In Stock!', 'The truing stand is in Stock! Order it now!\n{0}\n\nLog:\n{1}'.format(PRODUCT_LINK, self._log))
                 else:
-                    mailer.send_mail(self._settings['to_address'], 'Product is not yet in Stock', 'We will keep checking.\n\nLog:\n' + self._log)
+                    mailer.send_mail(self._settings['to_address'], 'Truing Stand Is Still Not In Stock', 'We will keep checking.\n\nLog:\n' + self._log)
         except Exception as e:
             self.logDetail('Exception "{0}" sending report email'.format(e))
             self.reportError('Failed to send report email')
@@ -61,7 +65,7 @@ class Logger:
             else:
                 if self._inStock:
                     # Only send a text if the product is in stock
-                    message = 'Product is in Stock! Order right away!'
+                    message = 'The truing stand is in Stock! Order it now! {0}'.format(PRODUCT_LINK)
                 else:
                     self.logDetail('Not sending text: check was successful, but the product is not in stock')
                     return
@@ -159,7 +163,8 @@ class Checker:
 
     def checkItemInventory(self):
         self._logger.reportStep('Downloading web page content...')
-        pageContent = self.downloadWebPage('https://www.chainreactioncycles.com/us/en/lifeline-pro-mechanic-wheel-truing-stand/rp-prod122322')
+        
+        pageContent = self.downloadWebPage(PRODUCT_LINK)
         if pageContent is None:
             self._logger.reportError('Failed to download web page')
             return
