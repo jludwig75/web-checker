@@ -1,0 +1,3 @@
+[submodule "mailer"]
+	path = mailer
+	url = git@github.com:jludwig75/mailer.git
