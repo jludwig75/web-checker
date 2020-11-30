@@ -81,7 +81,7 @@ class Logger:
         self._textReport()
         self._emailReport()
         with open('check.log', 'a') as logFile:
-            logFile.write('{0}\n{1}'.format(datetime.datetime.now(), self._log))
+            logFile.write('{0}\n{1}\n'.format(datetime.datetime.now(), self._log))
 
 class Checker:
     def __init__(self, settings, logger):
